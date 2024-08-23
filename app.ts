@@ -4,6 +4,7 @@ import { logger as httpLogger } from 'hono/logger';
 import { logger } from './utils/logger';
 import { trpcServer } from '@hono/trpc-server';
 import { appRouter } from './router';
+import { serveStatic } from 'hono/bun';
 
 const app = new Hono();
 
@@ -17,6 +18,10 @@ app.use(
     router: appRouter,
   })
 );
+
+// Serve static files from the dist-frontend folder
+app.use('*', serveStatic({ root: 'dist' }));
+app.get('*', serveStatic({ path: './dist/index.html' }));
 
 const PORT = parseInt(Bun.env.PORT as string) || 3000;
 
