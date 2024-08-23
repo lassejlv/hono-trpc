@@ -16,5 +16,5 @@ export const userTable = sqliteTable('users', {
     .$onUpdate(() => sql`(current_timestamp)`),
 });
 
-export const InsertUser = typeof userTable.$inferInsert;
-export const SelectUser = typeof userTable.$inferSelect;
+export type InsertUser = typeof userTable.$inferInsert;
+export type SelectUser = typeof userTable.$inferSelect;

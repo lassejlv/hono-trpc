@@ -1,15 +1,13 @@
-import { initTRPC } from '@trpc/server';
-import { z } from 'zod';
+import { t } from './utils/trpc';
+import { userRouter } from './routes/users';
 
-const t = initTRPC.create();
-
-const publicProcedure = t.procedure;
 const router = t.router;
 
 export const appRouter = router({
-  hello: publicProcedure.input(z.object({ name: z.string() })).query(({ input }) => {
-    return `Hello ${input.name ?? 'World'}!`;
+  sayHi: t.procedure.query(() => {
+    return 'hi';
   }),
+  users: userRouter,
 });
 
 export type AppRouter = typeof appRouter;
