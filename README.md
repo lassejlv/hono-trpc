@@ -1,15 +1,5 @@
-# hono-trpc
+# Hono TRPC
 
-To install dependencies:
+full stack web application. Hono x TRPC for backend. React, Tailwind & Shadcn UI for frontend (with file based routing).
 
-```bash
-bun install
-```
-
-To run:
-
-```bash
-bun run src/index.ts
-```
-
-This project was created using `bun init` in bun v1.1.25. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+## WORK IN PROGRESS
