@@ -1,4 +1,4 @@
-import { generateTheme } from 'utils/ai';
+import { generateTheme } from '../utils/ai';
 import { t } from '../utils/trpc';
 import { z } from 'zod';
 
