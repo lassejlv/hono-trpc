@@ -60,13 +60,7 @@ export default function Register() {
         <Input name='password' type='password' placeholder='********' />
 
         <Button variant='secondary' type='submit' disabled={registerMutaion.isPending}>
-          {registerMutaion.isPending ? (
-            <>
-              <Spinner size={16} /> Creating account...
-            </>
-          ) : (
-            'Create account'
-          )}
+          {registerMutaion.isPending ? <Spinner size={16} /> : 'Create account'}
         </Button>
       </form>
     </>
