@@ -5,6 +5,7 @@ import { logger } from './utils/logger';
 import { trpcServer } from '@hono/trpc-server';
 import { appRouter } from './router';
 import { serveStatic } from 'hono/bun';
+import { auth } from './routes/auth';
 
 const app = new Hono();
 
@@ -18,6 +19,8 @@ app.use(
     router: appRouter,
   })
 );
+
+app.route('/auth', auth);
 
 // Serve static files from the dist-frontend folder
 app.use('*', serveStatic({ root: 'dist' }));

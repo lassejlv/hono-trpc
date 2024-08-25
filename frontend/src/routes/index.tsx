@@ -1,68 +1,20 @@
-import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { useMutation } from '@tanstack/react-query';
-import { client } from '@/main';
-import { toast } from 'sonner';
-import Spinner from '@/components/Spinner';
-import { Copy } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 function Index() {
-  const newTheme = useMutation({
-    mutationKey: ['newTheme'],
-    mutationFn: async (prompt: string) => {
-      return await client.theme.newTheme.mutate({ prompt });
-    },
-    onSuccess: (data) => {
-      toast.success('Theme generated!');
-      console.log(data);
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const prompt = formData.get('prompt') as string;
-    newTheme.mutate(prompt);
-  };
-
   return (
     <>
-      <form onSubmit={handleSubmit}>
-        <div className="my-3">
-          <Label htmlFor="prompt">Prompt</Label>
-          <Textarea name="prompt" id="prompt" placeholder="dracula theme please" />
-        </div>
-        <Button type="submit" disabled={newTheme.isPending}>
-          {newTheme.isPending ? (
-            <>
-              <Spinner size={15} /> Generating...
-            </>
-          ) : (
-            'Generate'
-          )}
-        </Button>
-      </form>
+      <h1 className='text-3xl font-bold'>Hono x TRPC</h1>
+      <p className='text-gray-500'>This is a demo of using the best web application stack :D</p>
 
-      {newTheme.data && (
-        <>
-          <h2>Generated Theme</h2>
-          <Button
-            variant="outline"
-            onClick={() => {
-              navigator.clipboard.writeText(newTheme.data);
-              toast.success('Copied to clipboard!');
-            }}
-          >
-            <Copy size={16} />
-            Copy
-          </Button>
-          <pre>{JSON.stringify(newTheme.data, null, 2)}</pre>
-        </>
-      )}
+      <div className='flex gap-4'>
+        <Button variant='outline'>
+          <Link to='/register'>Register</Link>
+        </Button>
+        <Button variant='outline'>
+          <Link to='/login'>Login</Link>
+        </Button>
+      </div>
     </>
   );
 }
