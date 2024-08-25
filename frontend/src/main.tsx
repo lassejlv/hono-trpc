@@ -37,7 +37,7 @@ async function createRoutes() {
       // @ts-expect-error: idk just wanna fix this lol
       const Component = module.default;
       return { path, element: <Component /> };
-    })
+    }),
   );
 
   return createBrowserRouter(routes);
@@ -50,6 +50,6 @@ createRoutes().then((routesNew) => {
         <Toaster />
         <RouterProvider router={routesNew} />
       </QueryClientProvider>
-    </StrictMode>
+    </StrictMode>,
   );
 });

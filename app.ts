@@ -17,6 +17,9 @@ app.use(
   '/trpc/*',
   trpcServer({
     router: appRouter,
+    createContext: (_opts, c) => ({
+      var1: c,
+    }),
   })
 );
 

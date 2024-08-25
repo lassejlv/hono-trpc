@@ -1,3 +1,8 @@
 import { initTRPC } from '@trpc/server';
+import type { Context } from 'hono';
 
-export const t = initTRPC.create();
+type HonoContext = {
+  c: Context;
+};
+
+export const t = initTRPC.context<HonoContext>().create();

@@ -2,8 +2,8 @@ import Spinner from '@/components/Spinner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { client } from '@/main';
 import { useMutation } from '@tanstack/react-query';
-import ky from 'ky';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
@@ -18,13 +18,7 @@ export default function index() {
   const loginMutation = useMutation({
     mutationKey: ['login'],
     mutationFn: async ({ email, password }: Props) => {
-      try {
-        const resp = await ky.post('/auth/login', { json: { email, password } }).json<{ message: string }>();
-
-        return resp.message;
-      } catch (error: any) {
-        throw new Error(error.message);
-      }
+      return client.auth.login.mutate({ email, password });
     },
     onSuccess: (data) => {
       toast.success(data);

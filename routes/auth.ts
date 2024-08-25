@@ -16,7 +16,10 @@ const schema = z.object({
 });
 
 export const authRouter = t.router({
-  register: t.procedure.input(schema).mutation(async ({ input }) => {
+  register: t.procedure.input(schema).mutation(async ({ input, ctx }) => {
+    const hasCookie = getCookie(ctx.c, 'session');
+    if (hasCookie) throw new TRPCError({ code: 'BAD_REQUEST', message: 'User already logged in' });
+
     // check if user exists
     const userExists = await db.query.userTable.findFirst({
       where: eq(userTable.email, input.email),
@@ -36,34 +39,26 @@ export const authRouter = t.router({
 
     return result;
   }),
-});
-
-// Login Route (i can't set cookies with trpc)
-export const auth = new Hono();
-
-auth.post('/login', zValidator('json', schema.pick({ email: true, password: true })), async (c) => {
-  try {
-    const { email, password } = c.req.valid('json');
-
+  login: t.procedure.input(schema.pick({ email: true, password: true })).mutation(async ({ input, ctx }) => {
     const user = await db.query.userTable.findFirst({
-      where: eq(userTable.email, email),
+      where: eq(userTable.email, input.email),
     });
 
-    if (!user) throw new Error('User not found');
+    if (!user) throw new TRPCError({ code: 'NOT_FOUND', message: 'User not found' });
 
-    const passwordMatch = await Bun.password.verify(password, user.password);
+    const passwordMatch = await Bun.password.verify(input.password, user.password);
     if (!passwordMatch) throw new Error('Invalid password');
 
     const result = await db.insert(sessionTable).values({ userId: user.id }).returning();
 
-    // set cookie
-    setCookie(c, 'session', result[0].token, { httpOnly: true, maxAge: 60 * 60 * 24 * 7 });
+    console.log(result);
 
-    return c.json({ message: 'user logged in' });
-  } catch (error: any) {
-    return c.json({ error: error.message }, 400);
-  }
+    return 'User logged in';
+  }),
 });
+
+// Login Route (i can't set cookies with trpc)
+export const auth = new Hono();
 
 auth.get('/me', async (c) => {
   try {
