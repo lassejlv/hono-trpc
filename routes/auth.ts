@@ -1,16 +1,21 @@
 import { TRPCError } from '@trpc/server';
 import { db } from 'db';
-import { userTable } from '@/db/schemas/user';
+import { userTable, type SelectUser } from '@/db/schemas/user';
 import { eq } from 'drizzle-orm';
 import { t } from '../utils/trpc';
 import { z } from 'zod';
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie';
 import { sessionTable } from 'db/schemas/session';
+import type { Context } from 'hono';
 
 const schema = z.object({
   name: z.string().min(2).max(255),
   email: z.string().email().max(255),
   password: z.string().min(8).max(64),
+});
+
+const updateSchema = z.object({
+  name: z.string().min(2).max(255),
 });
 
 export const authRouter = t.router({
@@ -84,4 +89,26 @@ export const authRouter = t.router({
 
     return session.user;
   }),
+  updateUser: t.procedure.input(updateSchema).mutation(async ({ input, ctx }) => {
+    const session = await authChecker(ctx.c);
+    if (!session) throw new TRPCError({ code: 'UNAUTHORIZED', message: 'User not logged in' });
+
+    await db.update(userTable).set({ name: input.name }).where(eq(userTable.id, session.id));
+
+    return 'User updated';
+  }),
 });
+
+const authChecker = async (ctx: Context): Promise<SelectUser | null> => {
+  const hasCookie = getCookie(ctx, 'session');
+  if (!hasCookie) return null;
+
+  const session = await db.query.sessionTable.findFirst({
+    where: eq(sessionTable.token, hasCookie),
+    with: { user: true },
+  });
+
+  if (!session) return null;
+
+  return session.user;
+};
