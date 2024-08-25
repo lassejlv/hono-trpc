@@ -4,6 +4,9 @@ import { useAuth } from '@/hooks/useAuth';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { LogOut } from 'lucide-react';
+import { client } from '@/main';
+import { toast } from 'sonner';
 
 export default function index() {
   const navigate = useNavigate();
@@ -14,6 +17,14 @@ export default function index() {
   if (isError) return navigate('/login');
   if (!data) return navigate('/login');
 
+  const logoutMutation = async () => {
+    try {
+      await client.auth.logout.query();
+      navigate('/login');
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  };
   return (
     <>
       <h1 className='text-3xl font-bold'>Dashboard</h1>
@@ -33,6 +44,11 @@ export default function index() {
 
         <Button variant='secondary' type='submit'>
           Update
+        </Button>
+
+        <Button variant='outline' onClick={() => logoutMutation()}>
+          <LogOut size={16} />
+          Logout
         </Button>
       </form>
     </>
