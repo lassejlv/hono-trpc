@@ -4,9 +4,7 @@ import { userTable } from '@/db/schemas/user';
 import { eq } from 'drizzle-orm';
 import { t } from '../utils/trpc';
 import { z } from 'zod';
-import { Hono } from 'hono';
-import { zValidator } from '@hono/zod-validator';
-import { getCookie, setCookie } from 'hono/cookie';
+import { deleteCookie, getCookie, setCookie } from 'hono/cookie';
 import { sessionTable } from 'db/schemas/session';
 
 const schema = z.object({
@@ -53,27 +51,37 @@ export const authRouter = t.router({
 
     console.log(result);
 
+    // set cookie
+    setCookie(ctx.c, 'session', result[0].token, { httpOnly: true, maxAge: 60 * 60 * 24 * 7 });
+
     return 'User logged in';
   }),
-});
+  logout: t.procedure.query(async ({ ctx }) => {
+    const cookie = getCookie(ctx.c, 'session');
+    if (!cookie) throw new TRPCError({ code: 'BAD_REQUEST', message: 'No session cookie' });
 
-// Login Route (i can't set cookies with trpc)
-export const auth = new Hono();
+    const session = await db.query.sessionTable.findFirst({
+      where: eq(sessionTable.token, cookie),
+    });
 
-auth.get('/me', async (c) => {
-  try {
-    const cookie = getCookie(c, 'session');
-    if (!cookie) throw new Error('No session cookie');
+    if (!session) throw new TRPCError({ code: 'NOT_FOUND', message: 'Session not found' });
+
+    await db.delete(sessionTable).where(eq(sessionTable.token, cookie));
+    await deleteCookie(ctx.c, 'session');
+
+    return 'User logged out';
+  }),
+  me: t.procedure.query(async ({ ctx }) => {
+    const cookie = getCookie(ctx.c, 'session');
+    if (!cookie) throw new TRPCError({ code: 'BAD_REQUEST', message: 'No session cookie' });
 
     const session = await db.query.sessionTable.findFirst({
       where: eq(sessionTable.token, cookie),
       with: { user: true },
     });
 
-    if (!session) throw new Error('Session not found');
+    if (!session) throw new TRPCError({ code: 'NOT_FOUND', message: 'Session not found' });
 
-    return c.json(session.user);
-  } catch (error: any) {
-    return c.json({ error: error.message }, 400);
-  }
+    return session.user;
+  }),
 });
