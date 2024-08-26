@@ -8,6 +8,8 @@ import { client } from '@/main';
 import { toast } from 'sonner';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { LogOutIcon } from 'lucide-react';
 
 export default function index() {
   const navigate = useNavigate();
@@ -16,7 +18,7 @@ export default function index() {
 
   const updateMutation = useMutation({
     mutationFn: async (data: any) => {
-      return await client.auth.updateUser.mutate({ name: data.name });
+      return await client.auth.updateUser.mutate({ name: data.name, avatar: data.avatar });
     },
     onSuccess: (data) => {
       return toast.success(data);
@@ -30,7 +32,8 @@ export default function index() {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const name = formData.get('name') as string;
-    updateMutation.mutate({ name });
+    const avatar = formData.get('avatar') as string;
+    updateMutation.mutate({ name, avatar });
   };
 
   if (isLoading) return <Spinner size={16} />;
@@ -58,15 +61,37 @@ export default function index() {
               <Label htmlFor='name'>Name</Label>
               <Input name='name' type='text' placeholder='Enter your name' defaultValue={data.name} />
             </div>
+
             <div>
-              <Label htmlFor='email'>Email</Label>
-              <Input type='email' defaultValue={data.email} disabled />
-              <p className='text-gray-500'>You can't change your email</p>
+              <Label htmlFor='avatar'>Avatar</Label>
+              <Input name='avatar' type='text' placeholder='Avatar URL' defaultValue={data.avatar} />
             </div>
 
-            <Button type='submit' variant='secondary' disabled={updateMutation.isPending}>
-              {updateMutation.isPending ? <Spinner /> : 'Update'}
-            </Button>
+            <div>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div>
+                      <Label htmlFor='email'>Email</Label>
+                      <Input type='email' defaultValue={data.email} disabled />
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Email cannot be changed</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+
+            <div className='flex gap-4'>
+              <Button type='submit' variant='secondary' disabled={updateMutation.isPending}>
+                {updateMutation.isPending ? <Spinner /> : 'Update'}
+              </Button>
+              <Button variant='destructive' onClick={() => navigate('/logout')}>
+                <LogOutIcon size={16} />
+                Logout
+              </Button>
+            </div>
           </form>
         </TabsContent>
 
@@ -119,7 +144,7 @@ function Security() {
   return (
     <>
       <h1 className='text-2xl font-bold'>Sessions</h1>
-      <ul>
+      <ul className='grid grid-cols-1 md:grid-cols-2 gap-4'>
         {data.map((session: any) => (
           <li key={session.id}>
             <p>Session ID: {session.id}</p>
@@ -127,7 +152,7 @@ function Security() {
             <p>Created at: {formatDate(session.createdAt)}</p>
             <p>Expire: {formatDate(session.expiresAt)}</p>
             <Button variant='destructive' disabled={revokeMutation.isPending} onClick={() => revokeMutation.mutate(session.id)}>
-              Revoke
+              {revokeMutation.isPending ? <Spinner size={16} /> : 'Revoke'}
             </Button>
           </li>
         ))}

@@ -11,6 +11,6 @@ env.parse(Bun.env);
 
 declare global {
   namespace NodeJS {
-    interface ProcessEnv extends z.infer<typeof env> { }
+    interface ProcessEnv extends z.infer<typeof env> {}
   }
 }

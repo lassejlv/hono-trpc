@@ -16,6 +16,7 @@ const schema = z.object({
 
 const updateSchema = z.object({
   name: z.string().min(2).max(255),
+  avatar: z.string().max(255).optional(),
 });
 
 export const authRouter = t.router({
@@ -91,7 +92,10 @@ export const authRouter = t.router({
     const session = await authChecker(ctx.c);
     if (!session) throw new TRPCError({ code: 'UNAUTHORIZED', message: 'User not logged in' });
 
-    await db.update(userTable).set({ name: input.name }).where(eq(userTable.id, session.id));
+    await db
+      .update(userTable)
+      .set({ name: input.name, avatar: input.avatar || session.avatar })
+      .where(eq(userTable.id, session.id));
 
     return 'User updated';
   }),
