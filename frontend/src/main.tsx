@@ -33,12 +33,15 @@ async function createRoutes() {
         .replace(/\[\.{3}.+\]/, '*')
         .replace(/\[(.+)\]/, ':$1');
 
-      const module = await importRoutes[route]();
-      // @ts-expect-error: idk just wanna fix this lol
+      const module = (await importRoutes[route]()) as Record<string, any>;
       const Component = module.default;
       return { path, element: <Component /> };
     }),
   );
+
+  // you can add more advanced routes here. Like 404
+  const get404 = await import('./routes/404.tsx');
+  routes.push({ path: '*', element: <get404.default /> });
 
   return createBrowserRouter(routes);
 }
@@ -47,7 +50,7 @@ createRoutes().then((routesNew) => {
   createRoot(document.getElementById('root')!).render(
     <StrictMode>
       <QueryClientProvider client={queryClient}>
-        <Toaster />
+        <Toaster theme='dark' richColors />
         <RouterProvider router={routesNew} />
       </QueryClientProvider>
     </StrictMode>,

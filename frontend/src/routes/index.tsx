@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowRight, Code, Database, Zap, Server, Globe, Layout, Palette, FileCode, Boxes } from 'lucide-react';
+import { ArrowRight, Code, Database, Zap, Server, Globe, Layout, Palette, FileCode, Boxes, RefreshCw } from 'lucide-react';
 
 function Index() {
   const githubRepo = 'https://github.com/lassejlv/hono-trpc';
@@ -49,11 +49,11 @@ function Index() {
               </div>
             </div>
           </section>
-          <section className='w-full py-12 md:py-24 lg:py-32 bg-gray-100 dark:bg-gray-800'>
+          <section className='w-full py-12 md:py-24 lg:py-32'>
             <div className='container px-4 md:px-6'>
               <h2 className='text-3xl font-bold tracking-tighter sm:text-5xl text-center mb-12'>Our Tech Stack</h2>
               <div className='grid gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-12' id='features'>
-                <Card>
+                <Card className='shadow-lg shadow-indigo-500'>
                   <CardHeader>
                     <Server className='h-14 w-14 mb-4 text-primary' />
                     <CardTitle>Hono</CardTitle>
@@ -62,7 +62,7 @@ function Index() {
                     <p className='text-gray-500 dark:text-gray-400'>Ultra-fast web framework for the Edges. Simple, lightweight, and flexible.</p>
                   </CardContent>
                 </Card>
-                <Card>
+                <Card className='shadow-lg shadow-indigo-500'>
                   <CardHeader>
                     <Code className='h-14 w-14 mb-4 text-primary' />
                     <CardTitle>tRPC</CardTitle>
@@ -73,7 +73,7 @@ function Index() {
                     </p>
                   </CardContent>
                 </Card>
-                <Card>
+                <Card className='shadow-lg shadow-indigo-500'>
                   <CardHeader>
                     <Layout className='h-14 w-14 mb-4 text-primary' />
                     <CardTitle>React</CardTitle>
@@ -82,7 +82,18 @@ function Index() {
                     <p className='text-gray-500 dark:text-gray-400'>A JavaScript library for building user interfaces with reusable components.</p>
                   </CardContent>
                 </Card>
-                <Card>
+                <Card className='shadow-lg shadow-indigo-500'>
+                  <CardHeader>
+                    <RefreshCw className='h-14 w-14 mb-4 text-primary' />
+                    <CardTitle>React Query</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className='text-gray-500 dark:text-gray-400'>
+                      Powerful asynchronous state management for TS/JS, React, Solid, Vue, Svelte and Angular
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card className='shadow-lg shadow-indigo-500'>
                   <CardHeader>
                     <FileCode className='h-14 w-14 mb-4 text-primary' />
                     <CardTitle>TypeScript</CardTitle>
@@ -93,7 +104,7 @@ function Index() {
                     </p>
                   </CardContent>
                 </Card>
-                <Card>
+                <Card className='shadow-lg shadow-indigo-500'>
                   <CardHeader>
                     <Palette className='h-14 w-14 mb-4 text-primary' />
                     <CardTitle>Tailwind CSS</CardTitle>
@@ -104,7 +115,7 @@ function Index() {
                     </p>
                   </CardContent>
                 </Card>
-                <Card>
+                <Card className='shadow-lg shadow-indigo-500'>
                   <CardHeader>
                     <Database className='h-14 w-14 mb-4 text-primary' />
                     <CardTitle>Turso</CardTitle>
@@ -115,7 +126,7 @@ function Index() {
                     </p>
                   </CardContent>
                 </Card>
-                <Card>
+                <Card className='shadow-lg shadow-indigo-500'>
                   <CardHeader>
                     <Boxes className='h-14 w-14 mb-4 text-primary' />
                     <CardTitle>Drizzle</CardTitle>
@@ -126,7 +137,7 @@ function Index() {
                     </p>
                   </CardContent>
                 </Card>
-                <Card>
+                <Card className='shadow-lg shadow-indigo-500'>
                   <CardHeader>
                     <Globe className='h-14 w-14 mb-4 text-primary' />
                     <CardTitle>File-based Routing</CardTitle>

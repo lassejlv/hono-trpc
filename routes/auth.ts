@@ -76,7 +76,7 @@ export const authRouter = t.router({
 
     return 'User logged out';
   }),
-  me: t.procedure.query(async ({ ctx }) => {
+  me: t.procedure.query(async ({ ctx }): Promise<SelectUser> => {
     const cookie = getCookie(ctx.c, 'session');
     if (!cookie) throw new TRPCError({ code: 'BAD_REQUEST', message: 'No session cookie' });
 

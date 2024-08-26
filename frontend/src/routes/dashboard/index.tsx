@@ -1,5 +1,5 @@
 import Spinner from '@/components/Spinner';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -40,6 +40,10 @@ export default function index() {
     <>
       <h1 className='text-3xl font-bold'>Dashboard</h1>
       <p className='text-gray-500'>Welcome to the dashboard my freind</p>
+
+      <Button variant='link'>
+        <Link to={`/user/${data.id}`}>View Profile</Link>
+      </Button>
 
       <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
         <div>
