@@ -19,7 +19,14 @@ export const client = createTRPCProxyClient<AppRouter>({
 });
 
 // create query client
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 10,
+      refetchOnWindowFocus: true,
+    },
+  },
+});
 
 // Import all routes
 const importRoutes = import.meta.glob('/src/routes/**/[a-z[]*.tsx');

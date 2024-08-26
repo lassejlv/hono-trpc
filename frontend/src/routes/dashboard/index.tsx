@@ -79,7 +79,7 @@ export default function index() {
 }
 
 function Security() {
-  const { isLoading, isError, data, error } = useQuery({
+  const { isLoading, isError, data, error, refetch } = useQuery({
     queryKey: ['sessions'],
     queryFn: async () => {
       return await client.auth.getSessions.query();
@@ -92,6 +92,8 @@ function Security() {
       return await client.auth.revokeSession.query(`${sessionId}`);
     },
     onSuccess: (data) => {
+      // refetch sessions
+      refetch();
       return toast.success(data);
     },
     onError: (error) => {
@@ -103,6 +105,17 @@ function Security() {
   if (isError) return <h1>Error: {error.message}</h1>;
   if (!data) return <h1>No sessions</h1>;
 
+  const formatDate = (date: any) => {
+    return new Date(date).toLocaleDateString('en-GB', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+    });
+  };
+
   return (
     <>
       <h1 className='text-2xl font-bold'>Sessions</h1>
@@ -111,31 +124,8 @@ function Security() {
           <li key={session.id}>
             <p>Session ID: {session.id}</p>
 
-            <p>
-              Created at:{' '}
-              {new Date(session.createdAt).toLocaleDateString('en-GB', {
-                day: 'numeric',
-                month: 'short',
-                year: 'numeric',
-                hour: 'numeric',
-                minute: 'numeric',
-                second: 'numeric',
-              })}
-            </p>
-            <p>
-              Expire:{' '}
-              {
-                // turn Date.now() into a date object. session.expiresAt
-                new Date(session.expiresAt).toLocaleDateString('en-GB', {
-                  day: 'numeric',
-                  month: 'short',
-                  year: 'numeric',
-                  hour: 'numeric',
-                  minute: 'numeric',
-                  second: 'numeric',
-                })
-              }
-            </p>
+            <p>Created at: {formatDate(session.createdAt)}</p>
+            <p>Expire: {formatDate(session.expiresAt)}</p>
             <Button variant='destructive' disabled={revokeMutation.isPending} onClick={() => revokeMutation.mutate(session.id)}>
               Revoke
             </Button>
