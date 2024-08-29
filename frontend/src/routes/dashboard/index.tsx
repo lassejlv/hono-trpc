@@ -10,9 +10,12 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { LogOutIcon } from 'lucide-react';
+import { useState } from 'react';
 
 export default function index() {
   const navigate = useNavigate();
+
+  const [previewAvatar, setPreviewAvatar] = useState<boolean>(false);
 
   const { data, isError, isLoading } = useAuth();
 
@@ -49,6 +52,7 @@ export default function index() {
         <TabsList>
           <TabsTrigger value='profile'>Profile</TabsTrigger>
           <TabsTrigger value='security'>Security</TabsTrigger>
+          <TabsTrigger value='danger'>Danger</TabsTrigger>
         </TabsList>
         {/* profile */}
         <TabsContent value='profile'>
@@ -65,6 +69,12 @@ export default function index() {
             <div>
               <Label htmlFor='avatar'>Avatar</Label>
               <Input name='avatar' type='text' placeholder='Avatar URL' defaultValue={data.avatar} />
+
+              <span className='text-sm text-gray-500 cursor-pointer' onClick={() => setPreviewAvatar(!previewAvatar)}>
+                {previewAvatar ? 'Hide' : 'Show'} Avatar Preview
+              </span>
+
+              {previewAvatar && <img src={data.avatar} alt='avatar' className='w-10 h-10 rounded-full' />}
             </div>
 
             <div>
@@ -97,6 +107,10 @@ export default function index() {
 
         <TabsContent value='security'>
           <Security />
+        </TabsContent>
+
+        <TabsContent value='danger'>
+          <Danger />
         </TabsContent>
       </Tabs>
     </>
@@ -158,5 +172,49 @@ function Security() {
         ))}
       </ul>
     </>
+  );
+}
+
+function Danger() {
+  const deleteMutation = useMutation({
+    mutationKey: ['delete'],
+    mutationFn: async (passoword: string) => {
+      return await client.auth.deleteUser.mutate({
+        confirm: true,
+        abosolutelySureToDeleteThisAccount: true,
+        password: passoword,
+      });
+    },
+    onSuccess: (data) => {
+      return toast.success(data);
+    },
+    onError: (error) => {
+      return toast.error(error.message);
+    },
+  });
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const password = formData.get('password') as string;
+    deleteMutation.mutate(password);
+  };
+
+  return (
+    <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
+      <h1 className='text-2xl font-bold'>Danger Zone</h1>
+
+      <p className='text-red-500'>This action is irreversible. You will lose all your data and account.</p>
+      <div>
+        <Label htmlFor='name'>Password</Label>
+        <Input name='password' type='password' placeholder='Enter your password to confirm' />
+      </div>
+
+      <div className='flex gap-4'>
+        <Button type='submit' variant='destructive' disabled={deleteMutation.isPending}>
+          {deleteMutation.isPending ? <Spinner /> : 'Delete Account'}
+        </Button>
+      </div>
+    </form>
   );
 }

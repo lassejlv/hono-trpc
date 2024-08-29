@@ -19,6 +19,16 @@ const updateSchema = z.object({
   avatar: z.string().max(255).optional(),
 });
 
+const deleteSchema = z.object({
+  confirm: z.boolean().refine((v) => v === true, {
+    message: 'You must be absolutely sure to delete this account',
+  }),
+  abosolutelySureToDeleteThisAccount: z.boolean().refine((v) => v === true, {
+    message: 'You must be absolutely sure to delete this account',
+  }),
+  password: z.string().min(8).max(64),
+});
+
 export const authRouter = t.router({
   register: t.procedure.input(schema).mutation(async ({ input, ctx }) => {
     const session = await authChecker(ctx.c);
@@ -75,7 +85,7 @@ export const authRouter = t.router({
 
     return 'User logged out';
   }),
-  me: t.procedure.query(async ({ ctx }): Promise<SelectUser> => {
+  me: t.procedure.query(async ({ ctx }) => {
     const cookie = getCookie(ctx.c, 'session');
     if (!cookie) throw new TRPCError({ code: 'BAD_REQUEST', message: 'No session cookie' });
 
@@ -130,6 +140,18 @@ export const authRouter = t.router({
     await db.delete(sessionTable).where(eq(sessionTable.id, id));
 
     return 'Session revoked';
+  }),
+  deleteUser: t.procedure.input(deleteSchema).mutation(async ({ input, ctx }) => {
+    const session = await authChecker(ctx.c);
+    if (!session) throw new TRPCError({ code: 'UNAUTHORIZED', message: 'User not logged in' });
+
+    const passwordMatch = await Bun.password.verify(input.password, session.password);
+    if (!passwordMatch) throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid password' });
+
+    await db.delete(sessionTable).where(eq(sessionTable.userId, session.id));
+    await db.delete(userTable).where(eq(userTable.id, session.id));
+
+    return 'User deleted';
   }),
 });
 

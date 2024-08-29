@@ -44,6 +44,8 @@ export default function index() {
       <h1 className='text-3xl font-bold'>Login</h1>
       <p className='text-gray-500'>Login to your account to get started</p>
 
+      <a href='/register'>Don't have an account? Register here</a>
+
       <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
         <Label htmlFor='email'>Email</Label>
         <Input name='email' type='email' placeholder='john@doe.gg' />

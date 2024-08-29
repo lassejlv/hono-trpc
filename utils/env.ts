@@ -7,7 +7,14 @@ const env = z.object({
   TURSO_AUTH_TOKEN: z.string(),
 });
 
-env.parse(Bun.env);
+const parsedData = env.safeParse(Bun.env);
+
+if (!parsedData.success) {
+  // prettify erros
+  console.error('Error parsing environment variables:');
+  console.table(parsedData.error.errors);
+  process.exit(1);
+}
 
 declare global {
   namespace NodeJS {

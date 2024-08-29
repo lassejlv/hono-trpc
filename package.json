@@ -3,7 +3,8 @@
   "module": "src/index.ts",
   "type": "module",
   "scripts": {
-    "dev": "bunx concurrently  \"bun dev:server\" \"bun dev:frontend\"",
+    "echoWelcomeMessage": "echo \"Welcome to the HRT Stack! 😎\" && echo \"Give a star on github: https://github.com/lassejlv/hono-trpc\" ",
+    "dev": "bun echoWelcomeMessage && bunx concurrently --kill-others-on-fail \"bun dev:server\" \"bun dev:frontend\"",
     "dev:server": "bun --watch app.ts",
     "dev:frontend": "cd frontend && bun dev",
     "db:generate": "bunx drizzle-kit generate",

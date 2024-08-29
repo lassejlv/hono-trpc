@@ -57,7 +57,7 @@ createRoutes().then((routesNew) => {
   createRoot(document.getElementById('root')!).render(
     <StrictMode>
       <QueryClientProvider client={queryClient}>
-        <Toaster theme='dark' richColors />
+        <Toaster theme='dark' richColors position='top-right' />
         <RouterProvider router={routesNew} />
       </QueryClientProvider>
     </StrictMode>,

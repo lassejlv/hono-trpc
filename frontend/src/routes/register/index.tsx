@@ -49,6 +49,8 @@ export default function Register() {
       <h1 className='text-3xl font-bold'>Register</h1>
       <p className='text-gray-500'>Create an account to get started</p>
 
+      <a href='/login'>Already have an account? Login here</a>
+
       <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
         <Label htmlFor='name'>Name</Label>
         <Input name='name' type='text' placeholder='John Doe' />
