@@ -53,6 +53,11 @@ export default function index() {
           <TabsTrigger value='profile'>Profile</TabsTrigger>
           <TabsTrigger value='security'>Security</TabsTrigger>
           <TabsTrigger value='danger'>Danger</TabsTrigger>
+          {data.admin && (
+            <TabsTrigger value='#' onClick={() => navigate('/dashboard/admin')}>
+              Admin
+            </TabsTrigger>
+          )}
         </TabsList>
         {/* profile */}
         <TabsContent value='profile'>
@@ -68,13 +73,13 @@ export default function index() {
 
             <div>
               <Label htmlFor='avatar'>Avatar</Label>
-              <Input name='avatar' type='text' placeholder='Avatar URL' defaultValue={data.avatar} />
+              <Input name='avatar' type='text' placeholder='Avatar URL' defaultValue={data.avatar as string} />
 
               <span className='text-sm text-gray-500 cursor-pointer' onClick={() => setPreviewAvatar(!previewAvatar)}>
                 {previewAvatar ? 'Hide' : 'Show'} Avatar Preview
               </span>
 
-              {previewAvatar && <img src={data.avatar} alt='avatar' className='w-10 h-10 rounded-full' />}
+              {previewAvatar && <img src={data.avatar as string} alt='avatar' className='w-10 h-10 rounded-full' />}
             </div>
 
             <div>

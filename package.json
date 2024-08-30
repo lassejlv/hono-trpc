@@ -7,8 +7,7 @@
     "dev": "bun echoWelcomeMessage && bunx concurrently --kill-others-on-fail \"bun dev:server\" \"bun dev:frontend\"",
     "dev:server": "bun --watch app.ts",
     "dev:frontend": "cd frontend && bun dev",
-    "db:generate": "bunx drizzle-kit generate",
-    "db:push": "bunx drizzle-kit push"
+    "db:push": "bunx drizzle-kit generate && bunx drizzle-kit push"
   },
   "devDependencies": {
     "@types/bun": "latest",

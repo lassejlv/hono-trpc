@@ -10,6 +10,7 @@ export const userTable = sqliteTable('users', {
   email: text('email').notNull().unique(),
   password: text('password').notNull(),
   avatar: text('avatar').default(defaultAvatar),
+  admin: integer('admin', { mode: 'boolean' }).default(false),
   createdAt: text('created_at')
     .notNull()
     .default(sql`(current_timestamp)`),
